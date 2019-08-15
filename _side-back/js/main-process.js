@@ -5,7 +5,8 @@ const fs    = require('fs')
 const {app} = require('electron')
 const glob  = require('glob')
 
-const App = require('./app')
+// const App = require(path.join(__dirname, 'App'))
+const App = require('./App')
 
 /**
   Fichier principal du main-process
