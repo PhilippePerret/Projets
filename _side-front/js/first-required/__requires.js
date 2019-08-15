@@ -2,7 +2,12 @@
 
 const path      = require('path')
     , fs        = require('fs')
-    , {remote}  = require('electron')
+const glob      = require('glob')
+const {app}     = require('electron').remote
+const exec      = require('child_process').exec
+const { clipboard } = require('electron')
+const remote = require('electron').remote
+const Dialog = remote.dialog
 
 
 window.onerror = function(err, url, line){

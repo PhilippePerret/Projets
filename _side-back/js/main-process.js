@@ -5,6 +5,8 @@ const fs    = require('fs')
 const {app} = require('electron')
 const glob  = require('glob')
 
+const App = require('./app')
+
 /**
   Fichier principal du main-process
   Tous les fichiers dans ce dossier seront automatiquement chargés.
@@ -23,7 +25,18 @@ global.MainBuild = {
     code = code
       .replace(/__CSS__/, this.CSSTags.join("\n"))
       .replace(/__SCRIPTS__/, this.JSTags.join("\n"))
-      .replace(/__ProductName__/, App.getProductName())
+      .replace(/__ProductName__/g, App.getProductName())
+    if (code.match('jquery') && code.match('jquery-ui')){
+      // Si les scripts inclus jquery et jquery-ui, il faut ajouter une
+      // balise pour ne pas produire d'erreur sur jquery-ui qui ne connaitrait
+      // pas jQuery.
+      var found = code.match(/(src="(.*?)jquery(.*?)"(.*?)<\/script>)/)
+      var idx = found.index + found[0].length
+      code =
+        code.substring(0, idx) +
+        "\n<script>window.$ = window.jQuery = require('jquery');</script>" +
+        code.substring(idx+1, code.length)
+    }
     fs.writeFileSync(this.mainHtmlPath, code)
   }
 

@@ -1,9 +1,27 @@
 'use strict'
+/**
+  Dom
+  version: 1.0.1
+**/
 
 const Dom = {
-    name: 'Dom'
+  name: 'Dom'
 
+  /**
+    Retourne un div.row pour un formulaire
+    @param {String} label   Le label. Si null, n'est pas construit
+    @param {HTMLElement} field  Le champ à mettre
+
+    @return {HTMLElement} La rangée construite.
+  **/
+, createFormRow(label, field){
+    var div = this.createDiv({class:'row'})
+    label && div.append(this.create('LABEL', {class:'label', text:label}))
+    div.append(field)
+    return div
+  }
 , createDiv(data){ return this.create('DIV', data) }
+, createSpan(data){ return this.create('SPAN', data) }
 , createInputText(attrs){return this.create('INPUT', Object.assign(attrs,{type:'text'}))}
 , createTextarea(attrs){return this.create('TEXTAREA', attrs)}
 , createHidden(attrs){return this.create('INPUT', Object.assign(attrs,{type:'hidden'}))}
@@ -24,6 +42,13 @@ const Dom = {
     dom.append(cb)
     dom.append(label)
     return dom
+  }
+  // Pour créer un champ de date
+, createDateField(attrs){
+    attrs.id || (attrs.id = attrs.name)
+    var field = this.createInputText(attrs)
+    $(field).datepicker()
+    return field
   }
   /**
     Pour actualiser un menu

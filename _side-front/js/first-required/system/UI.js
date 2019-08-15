@@ -3,10 +3,18 @@
 const UI = {
 
   init(){
-    this.middleColumn.append(Dom.createDiv({id:'tdm'}))
-    this.leftColumn.append(Dom.createDiv({id:'book', class:'asbook'}))
+    this.leftColumn.append(Dom.createDiv({id:'current_projets', class:'projets-list'}))
+    this.leftColumn.append(Dom.createDiv({id:'next_projets', class:'projets-list'}))
+    this.middleColumn.append(Dom.createDiv({id:'done_projets', class:'projets-list'}))
+    this.middleColumn.append(Dom.createDiv({id:'givenup_projets', class:'projets-list'}))
     this.setDimensions()
 
+    this.currentProjetsList = UI.leftColumn.querySelector('#current_projets')
+    this.nextProjetsList    = UI.leftColumn.querySelector('#next_projets')
+    this.doneProjetsList    = UI.middleColumn.querySelector('#done_projets')
+    this.givenupProjetsList = UI.middleColumn.querySelector('#givenup_projets')
+
+    this.observe()
 
     // // Pour remplir le book pour essai (jusqu'à ce qu'il y ait suffisamment
     // // de données)
@@ -16,23 +24,18 @@ const UI = {
 
   }
 
-, hideBook(){
-    this.book.style.display = 'none'
-  }
-, showBook(){
-    this.book.style.display = 'block'
-  }
-
 , setDimensions(){
     const my = this
         , hwindow = window.innerHeight
         , hheader = UI.header.offsetHeight
         , hfooter = UI.footer.offsetHeight
         , innerHeight = `${hwindow - (hheader + hfooter)}px`
-    my.book.style.maxHeight = innerHeight
-    my.book.style.height = innerHeight
   }
 
+, observe(){
+    $('.projets-list').sortable()
+    $('.projets-list .projet').draggable()
+  }
   /**
     Rend visible l'élément +o+ {HTMLElement} dans son parent
   **/
@@ -94,9 +97,7 @@ Object.defineProperties(UI,{
   body:{get(){return document.querySelector('body')}}
 , header:{get(){return document.querySelector('section#header')}}
 , footer:{get(){return document.querySelector('section#footer')}}
-, book:{get(){return this.leftColumn.querySelector('div#book')}}
 , rightColumn:  {get(){return document.querySelector('section#right-column')}}
 , middleColumn: {get(){return document.querySelector('section#middle-column')}}
-, tdm: {get(){return document.querySelector('section#middle-column div#tdm')}}
 , leftColumn:   {get(){return document.querySelector('section#left-column')}}
 })

@@ -1,0 +1,14 @@
+/* Toutes les listes de projet */
+div.projets-list {
+
+}
+
+li.projet {
+  list-style: none;
+  border: 1px solid blue;
+  padding: 8px;
+  margin-bottom:2px;
+}
+li.projet span.name {
+  font-variant: small-caps;
+}
