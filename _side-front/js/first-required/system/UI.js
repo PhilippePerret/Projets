@@ -5,12 +5,16 @@ const UI = {
   init(){
     this.leftColumn.append(Dom.createDiv({id:'current_projets', class:'projets-list'}))
     this.leftColumn.append(Dom.createDiv({id:'next_projets', class:'projets-list'}))
-    this.middleColumn.append(Dom.createDiv({id:'done_projets', class:'projets-list'}))
+    this.leftColumn.append(Dom.createDiv({id:'futur_projets', class:'projets-list'}))
+    this.middleColumn.append(Dom.createDiv({id:'wait_projets', class:'projets-list'}))
     this.middleColumn.append(Dom.createDiv({id:'givenup_projets', class:'projets-list'}))
+    this.middleColumn.append(Dom.createDiv({id:'done_projets', class:'projets-list'}))
     this.setDimensions()
 
     this.currentProjetsList = UI.leftColumn.querySelector('#current_projets')
     this.nextProjetsList    = UI.leftColumn.querySelector('#next_projets')
+    this.futurProjetsList   = UI.leftColumn.querySelector('#futur_projets')
+    this.waitProjetsList    = UI.middleColumn.querySelector('#wait_projets')
     this.doneProjetsList    = UI.middleColumn.querySelector('#done_projets')
     this.givenupProjetsList = UI.middleColumn.querySelector('#givenup_projets')
 
@@ -35,6 +39,7 @@ const UI = {
 , observe(){
     $('.projets-list').sortable()
     $('.projets-list .projet').draggable()
+    $('.projets-list').droppable({accept:'.projet'})
   }
   /**
     Rend visible l'élément +o+ {HTMLElement} dans son parent

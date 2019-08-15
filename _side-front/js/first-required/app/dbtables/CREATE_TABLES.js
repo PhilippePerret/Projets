@@ -13,6 +13,7 @@ const PROJET_DB = {
       state VARCHAR(20) NOT NULL,
       description TEXT DEFAULT NULL,
       folder VARCHAR(255) DEFAULT NULL,
+      open_in VARCHAR(20) DEFAULT 'finder',
       file   VARCHAR(255) DEFAULT NULL,
       expected_at   DATE,
       started_at    DATE,

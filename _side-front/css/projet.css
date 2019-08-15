@@ -1,14 +1,50 @@
 /* Toutes les listes de projet */
 div.projets-list {
-
+  margin-bottom: 2em;
+  padding:1em;
+  border: 1px solid green;
+  background-color: green;
+}
+div.projets-list:before {
+  font-family: 'Helvetica';
+  font-weight: bold;
+  color:#BBBBBB;
+}
+div#current_projets:before {
+  content:"Projets courants";
+}
+div#next_projets:before {
+  content:"Prochain projets";
+}
+div#futur_projets:before {
+  content:"Projets futurs";
+}
+div#done_projets:before {
+  content:"Projets achevés";
+}
+div#wait_projets:before {
+  content:"Projets en suspend";
+}
+div#givenup_projets:before {
+  content:"Projets abandonnés";
 }
 
 li.projet {
   list-style: none;
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
   padding: 8px;
   margin-bottom:2px;
+  background-color: white;
 }
 li.projet span.name {
   font-variant: small-caps;
+  font-weight: bold;
+}
+
+li.projet div.first-line {
+
+}
+
+li.projet div.first-line button.btn-edit {
+  float:right;
 }

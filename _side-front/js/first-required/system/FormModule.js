@@ -53,7 +53,11 @@ const FormModule = {
   }
 , setFormValue(prop, value){
     var field = this.form.querySelector(`*[name="${this.prefix}-${prop}"]`)
-    this.field.value = value
+    field || raise(`Le champ de name '${this.prefix}-${prop}' est introuvable…`)
+    if ( this.DATE_PROPERTIES && this.DATE_PROPERTIES.includes(prop) ) {
+      value = mmddyyyy(value)
+    }
+    field.value = value
   }
 
 , getFormValues(){

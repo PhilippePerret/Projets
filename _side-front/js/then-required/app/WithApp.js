@@ -5,7 +5,7 @@
   Gestion des états du projet
 **/
 
-class State {
+class WithApp {
   static get DATA(){ return this._data || (this._data = this.getData())}
 
   /**
@@ -24,12 +24,11 @@ class State {
 
   static getData(){
     return {
-        'current':  {hname: 'Projet en cours'}
-      , 'next':     {hname: 'Projet suivant'}
-      , 'futur':    {hname: 'Projet futur'}
-      , 'wait':     {hname: 'Projet en suspend'}
-      , 'done':     {hname: 'Projet achevé'}
-      , 'givenup':  {hname: 'Projet abandonné'}
+        'finder':   {hname: 'Finder'}
+      , 'atom':     {hname: 'Atom'}
+      , 'textmate': {hname: 'TextMate'}
+      , 'vim':      {hname: 'Vim'}
+      , 'xterm':    {hname: 'Terminal'}
     }
   }
 }

@@ -90,10 +90,11 @@ body > section#left-column {
 }
 body > section#middle-column {
   grid-column: 2;
-  padding-left:1em;
+  padding-left:8px;
 }
 body > section#right-column {
   grid-column: 3;
+  padding-left:16px;
 }
 
 body > div#aide {

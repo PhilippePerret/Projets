@@ -1,5 +1,8 @@
 'use strict'
-
+/**
+  Handies
+  version : 1.0.1
+**/
 // Pour pouvoir utiliser par exemple 'correct || raise("Ça n’est pas correct")'
 function raise(msgErr) {
   throw new Error(msgErr)
@@ -19,7 +22,11 @@ function mmddyyyy(date, delimiter){
   delimiter = delimiter || '/'
   if ( date ) {
     date = new Date(date)
-    return [date.getMonth()+1,date.getDate(),date.getFullYear()].join(delimiter)
+    return [
+          String(date.getMonth()+1).padStart(2,'0')
+        , String(date.getDate()).padStart(2,'0')
+        , date.getFullYear()
+      ].join(delimiter)
   } else {
     return ''
   }

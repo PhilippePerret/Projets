@@ -12,10 +12,16 @@ const ProjetForm = {
       this.openForm()
     }
   }
-, closeForm(){this.form.remove()}
-, openForm(projet){ this.build(); this.observe()}
+, closeForm(){this.form.remove(); delete this._form}
+, openForm(projet){
+  this.form && this.closeForm()
+  this.build()
+  this.form || raise("Impossible de trouver le formulaire, bizarre…")
+  this.observe()
+  projet && this.setFormValues(projet.data)
+}
 
-, PROPERTIES: ['id', 'name', 'description', 'categorie', 'state','folder','file','started_at','expected_at','finished_at']
+, PROPERTIES: ['id', 'name', 'description', 'categorie', 'state','folder','open_in','file','started_at','expected_at','finished_at']
 , DATE_PROPERTIES: ['started_at','expected_at','finished_at']
 , INTEGER_PROPERTIES: ['id', 'categorie']
 , table_name: 'projets'
@@ -23,34 +29,43 @@ const ProjetForm = {
 
 , async save(){
     if ( !this.dataAreValid() ) return
-    const projet_id = this.values.id
-        , now = new Date()
+    let projet_id = this.values.id
+      , now = new Date()
+      , isNew = !projet_id
+    let projet
     delete this.values.id
     var columns = []
     var values  = []
-    var inters  = []
     for ( var prop in this.values ){
-      columns.push(prop)
+      columns.push(`${prop} = ?`)
       values.push(this.values[prop])
-      inters.push('?')
     }
-    columns.push('updated_at');inters.push('?');values.push(now)
+    columns.push('updated_at = ?');values.push(now)
     var request
-    if ( projet_id ) {
+    if ( ! isNew ) {
       // <= l'identifiant du projet est défini
       // => C'est une modification
       values.push(projet_id)
-      request = `UPDATE ${this.table_name} (${columns.join(', ')}) VALUES (${inters.join(', ')}) WHERE id = ?`
+      request = `UPDATE ${this.table_name} SET ${columns.join(', ')} WHERE id = ?`
     } else {
       // <= L'identifiant du projet n'est pas défini
       // => C'est une création
-      columns.push('created_at');inters.push('?');values.push(now)
-      request = `INSERT INTO ${this.table_name} (${columns.join(', ')}) VALUES (${inters.join(', ')})`
+      columns.push('created_at = ?');values.push(now)
+      request = `INSERT INTO ${this.table_name} SET ${columns.join(', ')}`
     }
-    // console.log("request:", request)
-    // console.log("values:", values)
+    console.log("request:", request)
+    console.log("values:", values)
     await MySql2.execute(request, values)
     this.closeForm()
+    if ( isNew ) {
+      projet_id = await MySql2.lastInsertId()
+      projet = new Projet(projet_id)
+      Object.assign(Projet.items, {[projet_id]: projet})
+      Projet.all.push(projet)
+    } else {
+      projet = Projet.get(projet_id)
+    }
+    projet.update(this.values)
   }
 
   // Return true si les données sont valides et les met dans `this.values`
@@ -81,16 +96,19 @@ const ProjetForm = {
     form.append(Dom.createFormRow('Description', Dom.createTextarea({name:'projet-description', placeholder:'Brève description du projet'})))
     // Dossier
     form.append(Dom.createFormRow('Dossier principal', Dom.createInputText({name:'projet-folder', id:'projet-folder'})))
+    form.append(Dom.createFormRow('Ouvrir dans', Dom.createSelect({name:'projet-open_in', values:WithApp.selectValues})))
     // Fichier
     form.append(Dom.createFormRow('Fichier courant', Dom.createInputText({name:'projet-file', id:'projet-file'})))
     // Dates
-    form.append(Dom.createFormRow('Date de début', Dom.createDateField({name:'projet-started_at'})))
-    form.append(Dom.createFormRow('Date de fin espérée', Dom.createDateField({name:'projet-expected_at'})))
-    form.append(Dom.createFormRow('Date de fin réelle', Dom.createDateField({name:'projet-finished_at'})))
+    form.append(Dom.createFormRow('Date de début (MM/JJ/AAAAA)', Dom.createDateField({name:'projet-started_at'})))
+    form.append(Dom.createFormRow('Date de fin espérée (MM/JJ/AAAAA)', Dom.createDateField({name:'projet-expected_at'})))
+    form.append(Dom.createFormRow('Date de fin réelle (MM/JJ/AAAAA)', Dom.createDateField({name:'projet-finished_at'})))
 
     let divButtons = Dom.createDiv({class:'row buttons'})
     divButtons.append(Dom.createButton({text:'Enregistrer', id:'btn-save'}))
     form.append(divButtons)
+
+    // console.log("form:", form)
 
     UI.rightColumn.append(form)
   }
@@ -120,7 +138,7 @@ const ProjetForm = {
 }
 Object.defineProperties(ProjetForm,{
   form:{get(){
-    if ( undefined === this._form ) {
+    if ( ! this._form ) {
       this._form = document.querySelector('#projet-form')
     }
     return this._form
