@@ -1,0 +1,16 @@
+{
+  "name": "projets",
+  "description": "Table contenant les projets.",
+  "fields":{
+    "id": "Identifiant absolu du projet",
+    "description":"Description du projet",
+    "categorie_id": "Identifiant de la catégorie auquel appartient le projet.",
+    "folder": "Chemin d'accès au dossier principal du projet",
+    "file": "Chemin d'accès au fichier actuel du projet (celui qu'on est en train de travailler)",
+    "state": "État actuel du projet (cf. projet/states.js)", 
+    "created_at": "Date de création du projet",
+    "expected_at": "Date de fin attendue pour le projet",
+    "finished_at": "Date d'achèvement du projet",
+    "updated_at": "Date de dernière modification des données du projet"
+  }
+}

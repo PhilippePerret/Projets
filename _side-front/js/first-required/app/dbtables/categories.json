@@ -1,0 +1,9 @@
+{
+  "name":"categories",
+  "description":"Catégorie du projet",
+  "fields":{
+    "id": "Identifiant absolu de la catégorie",
+    "name": "Nom de la catégorie (par exemple 'Programme')",
+    "description":"Description de la catégorie."
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "lois_de_la_narration",
+  "productName": "Livre Lois Narration",
+  "version": "0.0.1",
+  "description": "Gestion du livre des lois de la Narration",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "start-update": "UPDATE_MAIN_HTML=true electron .",
+    "build": "electron-packager . --platform=darwin --icon=icons/app --asar --out=built --overwrite",
+    "dev": "electron . --debug"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PhilippePerret/LoisDeLaNarration.git"
+  },
+  "keywords": [
+    "Narration",
+    "Roman",
+    "Cinéma",
+    "Scénario",
+    "Écriture",
+    "Lois",
+    "Règles"
+  ],
+  "author": "Perret, Philippe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PhilippePerret/LoisDeLaNarration/issues"
+  },
+  "homepage": "https://github.com/PhilippePerret/LoisDeLaNarration#readme",
+  "devDependencies": {
+    "electron": "^6.0.0",
+    "electron-packager": "^14.0.4"
+  },
+  "dependencies": {
+    "exec": "^0.2.1",
+    "glob": "^7.1.4",
+    "mysql2": "^1.6.5"
+  }
+}

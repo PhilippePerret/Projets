@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Livre des Lois de la Narration</title>
+    <link rel="stylesheet" href="css/book.css" />
+<link rel="stylesheet" href="css/common.css" />
+<link rel="stylesheet" href="css/form.css" />
+<link rel="stylesheet" href="css/tdm.css" />
+<link rel="stylesheet" href="css/ui.css" />
+  </head>
+  <body>
+
+    <section id="header">
+      <div id="header-buttons" class="fright">
+        <button type="button" onclick="Aide.toggle.call(Aide)">Aide</button>
+      </div>
+      <h1>Le Grand Livre des Lois de la Narration</h1>
+    </section>
+
+    <section id="left-column">
+
+    </section>
+
+    <section id="middle-column">
+    </section>
+
+    <section id="right-column">
+    </section>
+
+
+    <section id="footer">
+      <div class="fleft">
+        <span id="message">---</span>
+        <button type="button" onclick="G2LN.exportBook.call(G2LN)">IMPRIMER (PDF)</button>
+        <button type="button" onclick="G2LN.uploadBook.call(G2LN)">UPLOAD</button>
+        <button type="button" onclick="G2LN.dumpDatabase.call(G2LN)">Dump DB</button>
+        <button id="btn-search" type="button" onclick="Search.toggleForm.call(Search)">RECHERCHE</button>
+      </div>
+      <button type="button" onclick="Theme.toggleForm.call(Theme)">Nouveau Thème</button>
+      <!-- <button type="button" onclick="Theme.purgeTable.call(Theme)">Purger la table thèmes !</button> -->
+      <button type="button" onclick="SubTheme.toggleForm.call(SubTheme)">Nouveau Sous-thème</button>
+      <!-- <button type="button" onclick="SubTheme.purgeTable.call(SubTheme)">Purger la table sous-thèmes !</button> -->
+      <button type="button" onclick="Loi.toggleForm.call(Loi)">Nouvelle loi</button>
+    </section>
+
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/first-required/__requires.js"></script>
+<script type="text/javascript" src="js/first-required/app/class_gln_objet.js"></script>
+<script type="text/javascript" src="js/first-required/app/Flash.js"></script>
+<script type="text/javascript" src="js/first-required/system/constants.js"></script>
+<script type="text/javascript" src="js/first-required/system/Dom.js"></script>
+<script type="text/javascript" src="js/first-required/system/handies.js"></script>
+<script type="text/javascript" src="js/first-required/system/mysql.js"></script>
+<script type="text/javascript" src="js/first-required/system/Text.js"></script>
+<script type="text/javascript" src="js/first-required/system/UI.js"></script>
+<script type="text/javascript" src="js/then-required/app/aide.js"></script>
+<script type="text/javascript" src="js/then-required/app/Cover.js"></script>
+<script type="text/javascript" src="js/then-required/app/Data.js"></script>
+<script type="text/javascript" src="js/then-required/app/Dom_app.js"></script>
+<script type="text/javascript" src="js/then-required/app/Export.js"></script>
+<script type="text/javascript" src="js/then-required/app/G2LN.js"></script>
+<script type="text/javascript" src="js/then-required/app/IO.js"></script>
+<script type="text/javascript" src="js/then-required/app/Loi.js"></script>
+<script type="text/javascript" src="js/then-required/app/Search.js"></script>
+<script type="text/javascript" src="js/then-required/app/SubTheme.js"></script>
+<script type="text/javascript" src="js/then-required/app/Themes.js"></script>
+<script type="text/javascript" src="js/then-required/app/version.js"></script>
+<script type="text/javascript" src="js/then-required/db.js"></script>
+<script type="text/javascript" src="js/then-required/dbtables/CREATE_TABLES.js"></script>
+
+  </body>
+</html>
