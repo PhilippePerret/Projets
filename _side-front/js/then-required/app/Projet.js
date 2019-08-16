@@ -70,6 +70,11 @@ class Projet {
     this.placeInList()
   }
 
+  // Retourne true si le projet est dépassé
+  isOutOfDate(){
+    return this.expected_at && (new Date() > new Date(this.expected_at))
+  }
+
   placeInList(){
     this.domList.append(this.asCard())
     this.observe()
@@ -90,7 +95,9 @@ class Projet {
     Retourne le projet sous forme de carte, pour affichage
   **/
   asCard (options) {
-    let li = Dom.create('LI', {class:'projet', 'data-id':this.id, id:this.domId})
+    let css = ['projet']
+    this.isOutOfDate() && css.push('outofdate')
+    let li = Dom.create('LI', {class:css.join(' '), 'data-id':this.id, id:this.domId})
     let firstLine = Dom.createDiv({class:'first-line'})
     let rightButtons = Dom.createDiv({class:'right-buttons'})
     rightButtons.append(Dom.createButton({text:'détail', class:'btn-details'}))
@@ -100,12 +107,12 @@ class Projet {
     // La ligne de détails
     let detailsLine = Dom.createDiv({class:'details hidden'})
     detailsLine.append(Dom.createDiv({class:'description', text:this.description}))
-    detailsLine.append(this.spanDateFor('started_at', 'Début du travail'))
     detailsLine.append(this.spanDateFor('expected_at', 'Fin espérée'))
+    detailsLine.append(Dom.createFormRow('Déplacer vers', State.menuFor(this, 'state', this.state)))
+    detailsLine.append(this.spanDateFor('started_at', 'Début du travail'))
     detailsLine.append(this.spanDateFor('finished_at', 'Fin réelle'))
     detailsLine.append(this.spanDateFor('created_at', 'Donnée créée le'))
     detailsLine.append(this.spanDateFor('updated_at', 'Dernière modification'))
-    detailsLine.append(Dom.createFormRow('Déplacer vers', State.menuFor(this, 'state', this.state)))
 
     let secondLine = Dom.createDiv({class:'bottom-buttons'})
     secondLine.append(Dom.createSpan({text:'Ouvrir : '}))
@@ -125,7 +132,15 @@ class Projet {
     Construction d'un span contenant une date modifiable
   **/
   spanDateFor(prop, text){
-    var spanDate = Dom.createDiv({class:'date', id:`span-${this.domId}-${prop}`})
+    var css = ['date', prop]
+    if ( prop === 'expected_at' ) {
+      if ( this.isOutOfDate() ) {
+        css.push('warning', 'bold')
+      } else if ( this.expected_at ) {
+        css.push('ok', 'bold')
+      }
+    }
+    var spanDate = Dom.createDiv({class:css.join(' '), id:`span-${this.domId}-${prop}`})
     spanDate.append(Dom.create('LABEL',{text:text}))
     var val = this[prop] ? humanDateFor(this[prop],'short') : '- N/D -'
     spanDate.append(Dom.createInputText({id:`${this.domId}-${prop}`, class:'datable', value:val}))

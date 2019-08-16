@@ -24,12 +24,12 @@ class State {
 
   static getData(){
     return {
-        'current':  {hname: 'Projet en cours'}
-      , 'next':     {hname: 'Projet suivant'}
-      , 'futur':    {hname: 'Projet futur'}
-      , 'wait':     {hname: 'Projet en suspend'}
-      , 'done':     {hname: 'Projet achevé'}
-      , 'givenup':  {hname: 'Projet abandonné'}
+        'current':  {hname: 'Projet en cours',    dateRef: 'expected_at'}
+      , 'next':     {hname: 'Projet suivant',     dateRef: 'started_at' }
+      , 'futur':    {hname: 'Projet futur',       dateRef: 'started_at' }
+      , 'wait':     {hname: 'Projet en suspend',  dateRef: 'created_at'}
+      , 'done':     {hname: 'Projet achevé',      dateRef: 'finished_at'}
+      , 'givenup':  {hname: 'Projet abandonné',   dateRef: 'expected_at'}
     }
   }
 }

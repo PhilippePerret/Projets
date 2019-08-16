@@ -2,12 +2,12 @@
 div.projets-list {
   margin-bottom: 2em;
   padding:1em;
-  border: 1px solid green;
-  background-color: green;
+  border: 1px solid #182863;
+  background-color: #182863;
 }
 div.projets-list:before {
   font-family: 'Helvetica';
-  font-weight: bold;
+  /* font-weight: bold; */
   color:#BBBBBB;
 }
 div#current_projets:before {
@@ -36,6 +36,10 @@ li.projet {
   margin-bottom:2px;
   background-color: white;
 }
+li.projet.outofdate {
+  border: 2px solid red;
+}
+
 li.projet span.name {
   font-variant: small-caps;
   font-weight: bold;
@@ -78,6 +82,16 @@ li.projet div.details div.description {
 }
 li.projet div.date {
   margin-bottom:2px;
+}
+li.projet div.date.expected_at.warning,
+li.projet div.date.expected_at.warning *
+{
+  color:red;
+}
+li.projet div.date.expected_at.ok,
+li.projet div.date.expected_at.ok *
+{
+  color:green;
 }
 li.projet div.date > label,
 li.projet div.row > label
