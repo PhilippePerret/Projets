@@ -25,7 +25,7 @@ class Projet {
     // PROJET_DB.CreateTables()
 
     await this.loadAll()
-    ProjetDisplay.show()
+    ProjetList.show()
   }
 
 
@@ -76,25 +76,38 @@ class Projet {
   }
 
   remove(){
-    document.querySelector(`#${this.domId}`).remove()
-    delete this._domObj
-    this._domObj = undefined
+    this.domObj.remove()
+    delete this._domobj
+    this._domobj = undefined
   }
-  /**
+  /** ---------------------------------------------------------------------
     |
-    | Helpers méthodes
+    | Méthodes d'helpers
     |
   **/
 
   /**
     Retourne le projet sous forme de carte, pour affichage
   **/
-  asCard(options){
+  asCard (options) {
     let li = Dom.create('LI', {class:'projet', 'data-id':this.id, id:this.domId})
     let firstLine = Dom.createDiv({class:'first-line'})
-    firstLine.append(Dom.createButton({text:'Edit', class:'btn-edit'}))
+    let rightButtons = Dom.createDiv({class:'right-buttons'})
+    rightButtons.append(Dom.createButton({text:'détail', class:'btn-details'}))
+    rightButtons.append(Dom.createButton({text:'edit', class:'btn-edit'}))
+    firstLine.append(rightButtons)
     firstLine.append(Dom.createSpan({class:'name', text:this.name.toUpperCase()}))
-    let secondLine = Dom.createDiv()
+    // La ligne de détails
+    let detailsLine = Dom.createDiv({class:'details hidden'})
+    detailsLine.append(Dom.createDiv({class:'description', text:this.description}))
+    detailsLine.append(this.spanDateFor('started_at', 'Début du travail'))
+    detailsLine.append(this.spanDateFor('expected_at', 'Fin espérée'))
+    detailsLine.append(this.spanDateFor('finished_at', 'Fin réelle'))
+    detailsLine.append(this.spanDateFor('created_at', 'Donnée créée le'))
+    detailsLine.append(this.spanDateFor('updated_at', 'Dernière modification'))
+    detailsLine.append(Dom.createFormRow('Déplacer vers', State.menuFor(this, 'state', this.state)))
+
+    let secondLine = Dom.createDiv({class:'bottom-buttons'})
     secondLine.append(Dom.createSpan({text:'Ouvrir : '}))
     if ( this.folder ) {
       secondLine.append(Dom.createButton({text:'le dossier', class:'btn-open-folder'}))
@@ -103,39 +116,99 @@ class Projet {
       secondLine.append(Dom.createButton({text:'le fichier', class:'btn-open-file'}))
     }
     li.append(firstLine)
+    li.append(detailsLine)
     li.append(secondLine)
     return li
   }
 
   /**
+    Construction d'un span contenant une date modifiable
+  **/
+  spanDateFor(prop, text){
+    var spanDate = Dom.createDiv({class:'date', id:`span-${this.domId}-${prop}`})
+    spanDate.append(Dom.create('LABEL',{text:text}))
+    var val = this[prop] ? humanDateFor(this[prop],'short') : '- N/D -'
+    spanDate.append(Dom.createInputText({id:`${this.domId}-${prop}`, class:'datable', value:val}))
+    return spanDate
+  }
+
+  /** ---------------------------------------------------------------------
     |
     | Méthodes d'évènement
     |
   **/
   observe(){
+    const my = this
+    this._domobj = undefined
+    delete this._domobj
     var o = this.domObj
     o.find('.btn-edit').on('click', this.onEdit.bind(this))
+    o.find('.btn-details').on('click', this.onDetails.bind(this))
     o.find('.btn-open-folder').on('click', this.onOpenFolder.bind(this))
     o.find('.btn-open-file').on('click', this.onOpenFile.bind(this))
+    o.find('.details input.datable').each( (i, ui) => {
+      var [rien, projId, dateProp] = $(ui).attr('id').split('-')
+      // console.log("ui = ", ui, projId, dateProp)
+      $(ui).datepicker({
+          options:null
+        , gotoCurrent: true
+        , defaultDate: new Date(this[dateProp])
+        , monthNamesShort: [ "Jan", "Fév", "Mars", "Avr", "Mai", "Juin", "Juil", "Aout", "Sept", "Oct", "Nov", "Déc" ]
+        , onClose: my.onChooseDate.bind(my)
+      })
+    })
+    o.find(`.details select.state`).on('change', my.onChangeState.bind(my))
   }
 
+  // Pour afficher les détails du projet
+  onDetails(e){
+    this.domObjDetails.toggle()
+    return stopEvent(e)
+  }
   onEdit(e){
     Projet.edit(this)
     return stopEvent(e)
   }
   onOpenFolder(e){
     this.folder || raise("Impossible d'ouvrir le dossier : il n'est pas défini.")
-    let cmd = ((opening)=>{switch (this.open_in) {
+    let cmd = this.commandByOpenIn()
+    // console.log("cmd = '%s'", cmd)
+    exec(cmd, {shell: '/bin/bash'})
+    return stopEvent(e)
+  }
+
+  async onChooseDate(newDate, picker){
+    const my = this
+    const prop = $(picker).attr('id').split('-')[2]
+    newDate = new Date(newDate)
+    if ( mmddyyyy(newDate) != mmddyyyy(new Date(this[prop])) ) {
+      await MySql2.execute(`UPDATE projets SET ${prop} = ? WHERE id = ?`, [newDate, this.id])
+    }
+    let fdate = humanDateFor(newDate, 'short')
+    setTimeout(()=>{
+      $(`#${this.domId}-${prop}`).val(fdate)
+    }, 500)
+  }
+
+  async onChangeState(e){
+    var newState = this.domState.val()
+    let listName = `${newState}ProjetsList`
+    let list = UI[listName]
+    $(list).append(this.domObj)
+    this.data.state = newState
+    await MySql2.execute(`UPDATE projets SET state = ? WHERE id = ?`, [newState, this.id])
+  }
+
+  // Retourne la commande d'ouverture du dossier en fonction
+  // de la propriété `open_in`
+  commandByOpenIn(){
+    switch (this.open_in) {
       case 'finder':  return `open "${this.folder}"`
       case 'atom':    return `atom "${this.folder}"`
       case 'mate':    return `mate "${this.folder}"`
       case 'xterm':   return `cd "${this.folder}"`
-      default:
-        return `open "${this.folder}"`
-    }})(this.open_in)
-    console.log("cmd = '%s'", cmd)
-    exec(cmd)
-    return stopEvent(e)
+      default: return `open "${this.folder}"`
+    }
   }
 
   onOpenFile(e){
@@ -151,6 +224,8 @@ class Projet {
 
   get domId(){ return this._domid   || (this._domid = `projet-${this.id}`) }
   get domObj(){return this._domobj  || (this._domobj = $(`#${this.domId}`))}
+  get domObjDetails(){ return this.domObj.find('div.details')}
+  get domState(){ return this.domObjDetails.find('select.state')}
   /**
     Retourne l'objet DOM de la liste qui contient le projet en fonction
     de son state

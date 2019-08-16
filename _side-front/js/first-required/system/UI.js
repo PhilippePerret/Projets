@@ -37,9 +37,6 @@ const UI = {
   }
 
 , observe(){
-    $('.projets-list').sortable()
-    $('.projets-list .projet').draggable()
-    $('.projets-list').droppable({accept:'.projet'})
   }
   /**
     Rend visible l'élément +o+ {HTMLElement} dans son parent

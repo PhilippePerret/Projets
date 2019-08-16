@@ -1,7 +1,5 @@
-* Ajouter la description à la fiche du projet
-  ou mettre un div ouvrable pour afficher toutes les informations <= oui
-* Pouvoir déplacer le projet dans une autre liste
+
+* Marque sur les projets pour dire qu'ils sont en dépassement
+  - indiquer aussi à combien ils sont (librairie moment)
 
 ## Plus tard
-
-* Enregistrer le classement des projets

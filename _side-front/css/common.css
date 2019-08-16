@@ -4,9 +4,21 @@
   text-align:right;
 }
 /*
+ */
+
+.hidden { display: none;}
+/*
   Styles
  */
 .bold { font-weight: bold; }
 .italic { font-style: italic;}
 .warning {color:red;}
 .notice { color: blue; }
+
+select, select option {
+  font-family:inherit;
+  font-size:inherit;
+  font-style:inherit;
+  color:inherit;
+  background-color:inherit;
+}

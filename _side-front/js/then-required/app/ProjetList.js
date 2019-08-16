@@ -1,9 +1,9 @@
 'use strict'
 /**
-  Classe principale pour les projets
+  Classe principale pour les listes de projets
 **/
 
-class ProjetDisplay {
+class ProjetList {
   /** ---------------------------------------------------------------------
     |
     | CLASSE
@@ -11,11 +11,18 @@ class ProjetDisplay {
   **/
 
   /**
+    Méthode qui classe les projets dans les listes en fonction des dates
+    de fin attendue. Plus la date est proche, plus le projet est en haut.
+  **/
+  static classList(){
+
+  }
+
+  /**
     Méthode principale pour afficher tous les projets
   **/
   static show(){
     Projet.all.forEach(projet => {
-      // console.log("Affichage de ", projet)
       projet.placeInList()
     })
   }

@@ -8,10 +8,10 @@ function raise(msgErr) {
   throw new Error(msgErr)
 }
 
-function humanDateFor(date){
+function humanDateFor(date, short){
   const hd = new Date(date)
   var jour = hd.getDate()
-  var mois = MOIS[hd.getMonth()].long
+  var mois = MOIS[hd.getMonth()]['long', 'short']
   var anne = hd.getFullYear()
   return `${jour} ${mois} ${anne}`
 }

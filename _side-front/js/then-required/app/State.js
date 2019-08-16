@@ -12,8 +12,8 @@ class State {
     Retourne un menu pour la propriété +prop+ du projet +projet+
     @param {String} prop    Propriété, 'state' par défaut
   **/
-  static menuFor(projet, prop){
-    return Dom.createSelect({value:this.selectValues, name:`projet-${projet.id}-${prop||'state'}`})
+  static menuFor(projet, prop, selected){
+    return Dom.createSelect({values:this.selectValues, selected:selected, class:prop, id:`projet-${projet.id}-${prop||'state'}`, name:`projet-${projet.id}-${prop||'state'}`})
   }
 
   static get selectValues(){

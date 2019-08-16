@@ -5,6 +5,7 @@ const App = {
   async init(){
     UI.init()
     await Projet.init()
+    $.datepicker.setDefaults( $.datepicker.regional[ "fr" ] );
   }
 }
 
