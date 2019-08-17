@@ -219,7 +219,8 @@ class Projet {
   commandByOpenIn(){
     switch (this.open_in) {
       case 'finder':  return `open "${this.folder}"`
-      case 'atom':    return `atom "${this.folder}"`
+      // case 'atom':    return `/Applications/Atom.app/Contents/MacOS/Atom "${this.folder}"`
+      case 'atom':    return `/usr/local/bin/atom "${this.folder}"`
       case 'mate':    return `mate "${this.folder}"`
       case 'xterm':   return `cd "${this.folder}"`
       default: return `open "${this.folder}"`
