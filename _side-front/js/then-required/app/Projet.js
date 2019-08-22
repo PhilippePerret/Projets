@@ -25,6 +25,7 @@ class Projet {
     // PROJET_DB.CreateTables()
 
     await this.loadAll()
+    await ProjetTasks.loadAll()
     ProjetList.show()
   }
 
@@ -87,16 +88,26 @@ class Projet {
     return this.expected_at && (new Date() > new Date(this.expected_at))
   }
 
+  // Pour placer le projet dans sa liste
   placeInList(){
     this.domList.append(this.asCard())
     this.observe()
   }
 
+  // Destruction du projet
   remove(){
     this.domObj.remove()
     delete this._domobj
     this._domobj = undefined
   }
+
+  /**
+    |
+    | Les tâches du projet
+    |
+  **/
+  get tasks(){return this._tasks ||(this._tasks = new ProjetTasks(this))}
+
   /** ---------------------------------------------------------------------
     |
     | Méthodes d'helpers
@@ -127,16 +138,26 @@ class Projet {
     detailsLine.append(this.spanDateFor('created_at', 'Donnée créée le'))
     detailsLine.append(this.spanDateFor('updated_at', 'Dernière modification'))
 
+    // Les tâches (noter qu'on ajoute toujours la liste, même si elle est vide)
+    detailsLine.append(this.tasks.domList())
+
     let secondLine = Dom.createDiv({class:'bottom-buttons'})
-    secondLine.append(Dom.createSpan({text: '⏱', class:'chrono'}))
-    secondLine.append(Dom.createSpan({text: '0:00:00', class:'timer'}))
-    secondLine.append(Dom.createSpan({text:'Ouvrir : '}))
+    let cell1 = Dom.createDiv({class:'cell1'})
+    let cell2 = Dom.createDiv({class:'cell2'})
+    let cell3 = Dom.createDiv({class:'cell3'})
+
+    cell1.append(Dom.createSpan({text: '⏱', class:'chrono'}))
+    cell1.append(Dom.createSpan({text: '0:00:00', class:'timer'}))
+    cell2.append(Dom.createSpan({text:'Ouvrir : '}))
     if ( this.folder ) {
-      secondLine.append(Dom.createButton({text:'le dossier', class:'btn-open-folder'}))
+      cell2.append(Dom.createButton({text:'le dossier', class:'btn-open-folder'}))
     }
     if ( this.file ) {
-      secondLine.append(Dom.createButton({text:'le fichier', class:'btn-open-file'}))
+      cell2.append(Dom.createButton({text:'le fichier', class:'btn-open-file'}))
     }
+    cell3.append(Dom.createButton({text:'+tâche', class:'btn-add-task'}))
+    secondLine.append(cell1,cell2,cell3)
+
     li.append(firstLine)
     li.append(detailsLine)
     li.append(secondLine)
@@ -182,6 +203,7 @@ class Projet {
     o.find('.btn-details').on('click', this.onDetails.bind(this))
     o.find('.btn-open-folder').on('click', this.onOpenFolder.bind(this))
     o.find('.btn-open-file').on('click', this.onOpenFile.bind(this))
+    o.find('.btn-add-task').on('click', Task.buildFormFor.bind(Task,this))
     o.find('.details input.datable').each( (i, ui) => {
       var [rien, projId, dateProp] = $(ui).attr('id').split('-')
       // console.log("ui = ", ui, projId, dateProp)

@@ -38,6 +38,21 @@ const PROJET_DB = {
     MySql2.execute(request)
   }
 
+, create_table_tasks(){
+    // var request = `CREATE TABLE IF NOT EXISTS themes (
+    var request = `CREATE TABLE tasks (
+      id            TINYINT UNSIGNED PRIMARY KEY,
+      projet_id     TINYINT UNSIGNED,
+      content       TEXT NOT NULL,
+      priority      CHAR(3) DEFAULT 'mmm',
+      expected_at   DATE,
+      done_at       DATE,
+      created_at    DATE,
+      updated_at    DATE
+);`
+    MySql2.execute(request)
+  }
+
 /**
   Pour créer les tables, la première fois
 
@@ -48,6 +63,8 @@ const PROJET_DB = {
   // this.create_table_categories()
   // MySql2.execute("DROP TABLE IF EXISTS projets")
   // this.create_table_projets()
+  MySql2.execute("DROP TABLE IF EXISTS tasks")
+  this.create_table_tasks()
 }
 
 }// /PROJET_DB

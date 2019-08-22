@@ -1,0 +1,15 @@
+{
+  "name": "tasks",
+  "description": "Table contenant les taches.",
+  "fields":{
+    "id":           "Identifiant absolu de la tâche",
+    "projet_id":    "Identifiant du projet auquel la tâche appartient",
+    "content":      "Contenu de la tâche, donc le travail à faire",
+    "priority":     "Priorité de la tâche (sur trois lettres/ 'mmm')",
+    "created_at":   "Date de création de la tâche",
+    "started_at":   "Date de démarrage de la tâche",
+    "expected_at":  "Date de fin attendue pour le projet",
+    "done_at":      "Date d'achèvement de la tâche",
+    "updated_at":   "Date de dernière modification des données de la tâche"
+  }
+}
