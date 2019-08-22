@@ -15,7 +15,7 @@ class ProjetTasks {
     respectif
   **/
   static async loadAll(){
-    let tasks = await MySql2.execute("SELECT * FROM tasks")
+    let tasks = await MySql2.execute("SELECT * FROM tasks WHERE done_at IS NULL")
     this.all = []
     this.items = {}
     Task.lastId = 0

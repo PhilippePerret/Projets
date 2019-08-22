@@ -3,6 +3,11 @@ form {
   border:1px solid #BBBBBB;
   border-radius: 1em;
   width: 80%;
+  position: fixed;
+  right: 1em;
+  top: 5em;
+  background-color: white;
+  max-width: 25%;
 }
 form * {
   font-size:inherit;
@@ -40,4 +45,7 @@ form div.row.buttons {
 
 form div.row.buttons button {
   margin-left: 1em;
+}
+form div.row.buttons button.btn-cancel {
+  float: left;
 }

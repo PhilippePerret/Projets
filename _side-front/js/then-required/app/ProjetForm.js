@@ -105,7 +105,8 @@ const ProjetForm = {
     form.append(Dom.createFormRow('Date de fin réelle (MM/JJ/AAAAA)', Dom.createDateField({name:'projet-finished_at'})))
 
     let divButtons = Dom.createDiv({class:'row buttons'})
-    divButtons.append(Dom.createButton({text:'Enregistrer', id:'btn-save'}))
+    divButtons.append(Dom.createButton({text:'Annuler', class:'btn-cancel'}))
+    divButtons.append(Dom.createButton({text:'Enregistrer', class:'btn-save'}))
     form.append(divButtons)
 
     // console.log("form:", form)
@@ -113,7 +114,8 @@ const ProjetForm = {
     UI.rightColumn.append(form)
   }
 , observe(){
-    this.form.querySelector('#btn-save').addEventListener('click', this.save.bind(this))
+    this.form.querySelector('.btn-save').addEventListener('click', this.save.bind(this))
+    this.form.querySelector('.btn-cancel').addEventListener('click', this.closeForm.bind(this))
     this.form.querySelector('#projet-folder').addEventListener('click', this.chooseMainFolder.bind(this))
     this.form.querySelector('#projet-file').addEventListener('click', this.chooseMainFile.bind(this))
   }

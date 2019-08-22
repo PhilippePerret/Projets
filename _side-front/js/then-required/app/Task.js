@@ -29,11 +29,18 @@ class Task {
     form.append(Dom.createFormRow('Attendue pour', Dom.createDateField({name:'task-expected_at'})))
     form.append(Dom.createFormRow('Terminée le', Dom.createDateField({name:'task-done_at'})))
     let buttons = Dom.createDiv({class:'row buttons'})
+    buttons.append(Dom.createButton({text:'Annuler', class:'btn-cancel'}))
     buttons.append(Dom.createButton({text:'Créer la tâche', class:'btn-create'}))
     form.append(buttons)
     UI.rightColumn.append(form)
     const formObj = $(`form#task-form-${projet.id}`)
     formObj.find('button.btn-create').on('click', projet.tasks.create.bind(projet.tasks,formObj))
+    formObj.find('button.btn-cancel').on('click', this.cancelEdition.bind(this, formObj))
+  }
+
+  // Quand on annule la création/édition de la tâche
+  static cancelEdition(form){
+    form.remove()
   }
 
   /** ---------------------------------------------------------------------
