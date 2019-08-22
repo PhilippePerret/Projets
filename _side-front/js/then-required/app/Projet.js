@@ -201,6 +201,19 @@ class Projet {
     my.timer.on('click', my.onToggleChronometre.bind(my))
   }
 
+  /**
+    Pour débuter le travail sur le projet, mais seulement si le chronomètre
+    ne tourne pas encore. Dans le cas contraire, puisque le travail est déjà
+    commencé, on ne fait rien.
+    Cette méthode est appelée principalement lorsque l'on ouvre le dossier ou
+    le fichier du projet. Quand on ouvre les deux, le second élément ne doit
+    rien démarrer puisque le travail est déjà en cours
+  **/
+  onStartWorking(){
+    if ( this.chrono.running ) return
+    this.onToggleChronometre()
+  }
+
   // Pour arrêter ou lancer le chronomètre
   onToggleChronometre(e){
     const my = this
@@ -209,7 +222,7 @@ class Projet {
     } else {
       my.chrono.start(my)
     }
-    return stopEvent(e)
+    return e && stopEvent(e)
   }
   // Pour afficher les détails du projet
   onDetails(e){
@@ -220,11 +233,24 @@ class Projet {
     Projet.edit(this)
     return stopEvent(e)
   }
+
+  // Appelée quand on clique sur le bouton "Ouvrir Fichier"
+  onOpenFile(e){
+    this.file || raise("Impossible d'ouvrir le fichier : le n'est pas défini.")
+    exec(`open "${this.file}"`)
+    // On débute le travail (s'il n'est pas déjà commencé)
+    this.onStartWorking()
+    return stopEvent(e)
+  }
+
+  // Appelée quand on clique sur le bouton "Ouvrir Dossier"
   onOpenFolder(e){
     this.folder || raise("Impossible d'ouvrir le dossier : il n'est pas défini.")
     let cmd = this.commandByOpenIn()
     // console.log("cmd = '%s'", cmd)
     exec(cmd, {shell: '/bin/bash'})
+    // On débute le travail (s'il n'est pas déjà commencé)
+    this.onStartWorking()
     return stopEvent(e)
   }
 
@@ -261,12 +287,6 @@ class Projet {
       case 'xterm':   return `cd "${this.folder}"`
       default: return `open "${this.folder}"`
     }
-  }
-
-  onOpenFile(e){
-    this.file || raise("Impossible d'ouvrir le fichier : le n'est pas défini.")
-    exec(`open "${this.file}"`)
-    return stopEvent(e)
   }
 
   /**
