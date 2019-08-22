@@ -1,8 +1,20 @@
 'use strict'
-
+/**
+  Constante UI
+  version 1.0.1
+  ------------
+  # version 1.0.1
+    Ajout de la méthode UI.message et de l'objet UI.footerMessage
+    Pour afficher des messages en bas de page.
+**/
 const UI = {
 
-  init(){
+  // Pour écrire un message dans le pied de page
+  message(msg){
+    this.footerMessage.innerHTML = msg
+  }
+
+, init(){
     this.leftColumn.append(Dom.createDiv({id:'current_projets', class:'projets-list'}))
     this.leftColumn.append(Dom.createDiv({id:'next_projets', class:'projets-list'}))
     this.leftColumn.append(Dom.createDiv({id:'futur_projets', class:'projets-list'}))
@@ -99,6 +111,7 @@ Object.defineProperties(UI,{
   body:{get(){return document.querySelector('body')}}
 , header:{get(){return document.querySelector('section#header')}}
 , footer:{get(){return document.querySelector('section#footer')}}
+, footerMessage:{get(){return this.footer.querySelector('span#message')}}
 , rightColumn:  {get(){return document.querySelector('section#right-column')}}
 , middleColumn: {get(){return document.querySelector('section#middle-column')}}
 , leftColumn:   {get(){return document.querySelector('section#left-column')}}

@@ -17,7 +17,7 @@ const IO = {
 , pathOf(relpath){return path.join(this.appFolder, relpath)}
 
 , get appFolder(){
-  return this._appfolder || (this._appfolder = remote.app.getAppPath())
-}
+    return this._appfolder || (this._appfolder = remote.app.getAppPath())
+  }
 
 }

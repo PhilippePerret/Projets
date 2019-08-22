@@ -8,6 +8,7 @@
     "folder": "Chemin d'accès au dossier principal du projet",
     "open_in": "L'endroit où il faut ouvrir le dossier",
     "file": "Chemin d'accès au fichier actuel du projet (celui qu'on est en train de travailler)",
+    "working_time": "Durée de travail sur le projet, en secondes",
     "state": "État actuel du projet (cf. projet/states.js)",
     "created_at": "Date de création du projet",
     "started_at": "Date de démarrage du projet",

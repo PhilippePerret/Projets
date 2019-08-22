@@ -15,6 +15,7 @@ const PROJET_DB = {
       folder VARCHAR(255) DEFAULT NULL,
       open_in VARCHAR(20) DEFAULT 'finder',
       file   VARCHAR(255) DEFAULT NULL,
+      working_time INT UNSIGNED DEFAULT 0,
       expected_at   DATE,
       started_at    DATE,
       finished_at   DATE,

@@ -36,6 +36,7 @@ class Categorie {
       , 40: {hname: 'Analyse musicale'}
       , 60: {hname: 'Site internet'}
       , 50: {hname: 'Film'}
+      , 60: {hname: 'Apprentissage'}
       , 99: {hname: 'Autre'}
     }
   }

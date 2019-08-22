@@ -70,6 +70,18 @@ class Projet {
     this.placeInList()
   }
 
+  // Ajoute du temps de travail pour ce projet
+  async addWorkingTime(nombreSecondes) {
+    if ( !this.working_time) this.working_time = 0
+    this.working_time += nombreSecondes
+    let request = "UPDATE projets SET working_time = ? WHERE id = ?"
+    let values  = [this.working_time, this.id]
+    await MySql2.execute(request, values)
+    var hduration = this.chrono.s2h(this.working_time)
+    UI.message(`New working time for «${this.name}» : ${hduration}`)
+    $(`#${this.domId}-working_time`).text(hduration)
+  }
+
   // Retourne true si le projet est dépassé
   isOutOfDate(){
     return this.expected_at && (new Date() > new Date(this.expected_at))
@@ -108,6 +120,7 @@ class Projet {
     let detailsLine = Dom.createDiv({class:'details hidden'})
     detailsLine.append(Dom.createDiv({class:'description', text:this.description}))
     detailsLine.append(this.spanDateFor('expected_at', 'Fin espérée'))
+    detailsLine.append(this.spanDateFor('working_time', 'Durée de travail'))
     detailsLine.append(Dom.createFormRow('Déplacer vers', State.menuFor(this, 'state', this.state)))
     detailsLine.append(this.spanDateFor('started_at', 'Début du travail'))
     detailsLine.append(this.spanDateFor('finished_at', 'Fin réelle'))
@@ -115,6 +128,8 @@ class Projet {
     detailsLine.append(this.spanDateFor('updated_at', 'Dernière modification'))
 
     let secondLine = Dom.createDiv({class:'bottom-buttons'})
+    secondLine.append(Dom.createSpan({text: '⏱', class:'chrono'}))
+    secondLine.append(Dom.createSpan({text: '0:00:00', class:'timer'}))
     secondLine.append(Dom.createSpan({text:'Ouvrir : '}))
     if ( this.folder ) {
       secondLine.append(Dom.createButton({text:'le dossier', class:'btn-open-folder'}))
@@ -142,8 +157,14 @@ class Projet {
     }
     var spanDate = Dom.createDiv({class:css.join(' '), id:`span-${this.domId}-${prop}`})
     spanDate.append(Dom.create('LABEL',{text:text}))
-    var val = this[prop] ? humanDateFor(this[prop],'short') : '- N/D -'
-    spanDate.append(Dom.createInputText({id:`${this.domId}-${prop}`, class:'datable', value:val}))
+    var val
+    if ( prop != 'working_time' ) {
+      val = this[prop] ? humanDateFor(this[prop],'short') : '- N/D -'
+      spanDate.append(Dom.createInputText({id:`${this.domId}-${prop}`, class:'datable', value:val}))
+    } else {
+      val = this.chrono.s2h(this.working_time)
+      spanDate.append(Dom.create('LABEL',{id:`${this.domId}-${prop}`, class:'bold center', text:val}))
+    }
     return spanDate
   }
 
@@ -173,8 +194,23 @@ class Projet {
       })
     })
     o.find(`.details select.state`).on('change', my.onChangeState.bind(my))
+
+    // Le chronomètre pour mettre en route ou arrêter le chronomètre
+    // sur le projet
+    my.chronometre.on('click', my.onToggleChronometre.bind(my))
+    my.timer.on('click', my.onToggleChronometre.bind(my))
   }
 
+  // Pour arrêter ou lancer le chronomètre
+  onToggleChronometre(e){
+    const my = this
+    if ( my.chrono.running == true ) {
+      my.chrono.stop(my)
+    } else {
+      my.chrono.start(my)
+    }
+    return stopEvent(e)
+  }
   // Pour afficher les détails du projet
   onDetails(e){
     this.domObjDetails.toggle()
@@ -232,6 +268,22 @@ class Projet {
     exec(`open "${this.file}"`)
     return stopEvent(e)
   }
+
+  /**
+    |
+    | Méthodes pour le temps de travail (chronométrage)
+    |
+  **/
+
+  initChrono(){
+    const my = this
+    my.chrono.init()
+  }
+
+
+  get chrono(){
+    return this._chrono || (this._chrono = new WorkingTime(this))
+  }
   /**
     |
     | Propriétés (non définies par dispatch)
@@ -242,6 +294,12 @@ class Projet {
   get domObj(){return this._domobj  || (this._domobj = $(`#${this.domId}`))}
   get domObjDetails(){ return this.domObj.find('div.details')}
   get domState(){ return this.domObjDetails.find('select.state')}
+  get chronometre(){
+    return this._chronometre || (this._chronometre = this.domObj.find('span.chrono'))
+  }
+  get timer(){
+    return this._timer || (this._timer = this.domObj.find('span.timer'))
+  }
   /**
     Retourne l'objet DOM de la liste qui contient le projet en fonction
     de son state
