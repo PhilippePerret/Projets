@@ -1,3 +1,5 @@
+* Pour l'ajout de temps, il faut faire un dialog, plutôt, avec possibilité de modifier le temps à enregistrer et trois boutons plus clairs ("prendre le temps", "Ne pas prendre le temps")
+
 * # Quand on quitte l'application, il faut vérifier qu'aucun projet ne soit en cours (son chrono en marche). Pour le savoir, on pourrait conserver la référence générale au projet qui est en cours (en sachant qu'il ne peut pas y en avoir deux en même temps)
 
 * Pouvoir marquer des tâches "done" et ne plus les afficher

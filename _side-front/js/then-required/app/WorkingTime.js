@@ -1,5 +1,10 @@
 'use strict'
 
+// Fréquence de confirmation de la confirmation du travail sur le projet
+// lancé.
+// TODO Pouvoir définir cette durée dans les préférences de l'application.
+const RAPPEL_FREQUENCE = 3600
+
 /**
   Class WorkingTime
   -----------------
@@ -40,10 +45,14 @@ class WorkingTime {
   start(){
     const my = this
     my.reset()
-    my.startedAt    = Number(new Date())
-    my.timerChrono  = setInterval(my.playChrono.bind(my), 300)
+    this.startTimer()
     my.projet.timer.addClass('visible')
     my.running = true
+  }
+  startTimer(){
+    const my = this
+    my.startedAt = Number(new Date())
+    my.timerChrono  = setInterval(my.playChrono.bind(my), 300)
   }
   clearTimer(){
     const my = this
@@ -71,8 +80,18 @@ class WorkingTime {
     ++ this.ichrono
     this.ichrono < 6 || (this.ichrono = 0)
     this.projet.chronometre.text(this.roto(this.ichrono))
-    var d = this.s2h(parseInt((Number(new Date()) - this.startedAt)/1000,10))
+    let laps = (Number(new Date()) - this.startedAt)/1000
+    var d = this.s2h(parseInt(laps,10))
     this.projet.timer.text(d)
+    // Toutes les heures (ou RAPPEL_FREQUENCE), l'utilisateur doit confirmer
+    // qu'il travaille encore sur le projet
+    if ( laps > RAPPEL_FREQUENCE ){
+      const my = this
+      my.clearTimer()
+      my.addDuration()
+      alert(`Merci de confirmer que vous traillez bien encore sur le projet « ${my.projet.name} ».\n\nPour le confirmer, vous avez juste à cliquer « OK » et poursuivre. Sinon, cliquez sur le chronomètre pour mettre fin au travail.`)
+      my.startTimer()
+    }
   }
 
   // Prend un nombre de millisecondes et retourne l'horloge
