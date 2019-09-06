@@ -1,7 +1,7 @@
 {
   "name": "Projets",
   "productName": "Projets",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Gestion des projets courants, passés et futurs",
   "main": "main.js",
   "scripts": {

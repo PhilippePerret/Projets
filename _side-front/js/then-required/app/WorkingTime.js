@@ -89,7 +89,7 @@ class WorkingTime {
       const my = this
       my.clearTimer()
       my.addDuration()
-      alert(`Merci de confirmer que vous traillez bien encore sur le projet « ${my.projet.name} ».\n\nPour le confirmer, vous avez juste à cliquer « OK » et poursuivre. Sinon, cliquez sur le chronomètre pour mettre fin au travail.`)
+      alert(`Merci de confirmer que vous travaillez bien encore sur le projet « ${my.projet.name} ».\n\nPour le confirmer, vous avez juste à cliquer « OK » et poursuivre. Sinon, cliquez sur le chronomètre pour mettre fin au travail.`)
       my.startTimer()
     }
   }
