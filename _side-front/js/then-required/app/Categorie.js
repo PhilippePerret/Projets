@@ -31,6 +31,8 @@ class Categorie {
       , 10: {hname: 'Tutoriel écriture'}
       , 11: {hname: 'Tutoriel musique'}
       , 12: {hname: 'Autre tutoriel'}
+      , 14: {hname: 'Script-doctoring'}
+      , 18: {hname: 'Commentaires / Icare'}
       , 20: {hname: 'Programme informatique'}
       , 30: {hname: 'Animation'}
       , 40: {hname: 'Analyse musicale'}
