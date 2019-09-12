@@ -1,11 +1,19 @@
 'use strict'
 /**
   Constante UI
-  version 1.1.0
+  ============
+  version 1.1.2
   ------------
 
   Requis :
     - UI.css
+
+  # version 1.1.2
+    Correction du bug qui générait une erreur lorsqu'un message était
+    demandé alors que le dernier flash n'était pas encore supprimé.
+
+  # version 1.1.1
+    Suppression de tout ce qui concernait l'application 'Projet'
 
   # version 1.1.0
     Ajout de UI.flash qui permet d'afficher des messages.
@@ -25,6 +33,9 @@ const UI = {
   }
 
 , flash(msg, style){
+    const my = this
+    // Si un timer de destruction est en route, il faut l'interrompre
+    my.flashTimer && this.clearFlashTimer()
     let divFlash = document.querySelector('#flash') || Dom.createDiv({id:'flash'})
       , divMsg   = Dom.createDiv({class:style||'notice', text:msg})
     divFlash.append(divMsg)
@@ -32,38 +43,31 @@ const UI = {
     let nombre_mots = msg.split(' ').length
     if ( nombre_mots < 6 ) nombre_mots = 6
     let laps = 1000 * ( nombre_mots / 1.5 )
-    let timer = setTimeout(()=>{
+    my.flashTimer = setTimeout(()=>{
       let flash = document.querySelector('#flash')
       flash.classList.add('vanish')
-      clearTimeout(timer)
-      timer = setTimeout(()=>{flash.remove()}, laps + 5000)
+      my.clearFlashTimer()
+      my.flashTimer = setTimeout(()=>{
+        flash.remove()
+        my.clearFlashTimer()
+      }, laps + 5000)
     }, laps)
   }
+, clearFlashTimer(){
+    const my = this
+    clearTimeout(my.flashTimer)
+    my.flashTimer = null
+  }
 
+  /**
+    Initialisation
+    --------------
+    Cette méthode peut être écrasée (surclassée) par la méthode de même
+    nom qui peut être définie dans js/then-required/app/UI_app.js
+  **/
 , init(){
-    this.leftColumn.append(Dom.createDiv({id:'current_projets', class:'projets-list'}))
-    this.leftColumn.append(Dom.createDiv({id:'next_projets', class:'projets-list'}))
-    this.leftColumn.append(Dom.createDiv({id:'futur_projets', class:'projets-list'}))
-    this.middleColumn.append(Dom.createDiv({id:'wait_projets', class:'projets-list'}))
-    this.middleColumn.append(Dom.createDiv({id:'givenup_projets', class:'projets-list'}))
-    this.middleColumn.append(Dom.createDiv({id:'done_projets', class:'projets-list'}))
-    this.setDimensions()
-
-    this.currentProjetsList = UI.leftColumn.querySelector('#current_projets')
-    this.nextProjetsList    = UI.leftColumn.querySelector('#next_projets')
-    this.futurProjetsList   = UI.leftColumn.querySelector('#futur_projets')
-    this.waitProjetsList    = UI.middleColumn.querySelector('#wait_projets')
-    this.doneProjetsList    = UI.middleColumn.querySelector('#done_projets')
-    this.givenupProjetsList = UI.middleColumn.querySelector('#givenup_projets')
-
+    if ('function' == typeof(this.build)) this.build.call(this)
     this.observe()
-
-    // // Pour remplir le book pour essai (jusqu'à ce qu'il y ait suffisamment
-    // // de données)
-    // for ( var i = 0 ; i < 100 ; ++ i ){
-    //   this.book.append(Dom.createDiv({text:`La ligne d'index ${i}`}))
-    // }
-
   }
 
 , setDimensions(){
