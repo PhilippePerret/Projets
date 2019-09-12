@@ -125,6 +125,10 @@ div#flash {
 div#flash > div {
   padding:8px 24px;
 }
+div#flash > div.neutre {
+  background-color:black;
+  color:white;
+}
 div#flash > div.notice {
   background-color:#1D2986;
   color:white;
