@@ -53,8 +53,8 @@ const ProjetForm = {
       columns.push('created_at = ?');values.push(now)
       request = `INSERT INTO ${this.table_name} SET ${columns.join(', ')}`
     }
-    console.log("request:", request)
-    console.log("values:", values)
+    // console.log("request:", request)
+    // console.log("values:", values)
     await MySql2.execute(request, values)
     this.closeForm()
     if ( isNew ) {
@@ -85,7 +85,7 @@ const ProjetForm = {
     let form = Dom.create('FORM', {id:'projet-form'})
 
     // ID caché
-    form.append(Dom.createFormRow(null, Dom.createHidden({name:'projet-id'})))
+    form.append(Dom.createFormRow(null, Dom.createHidden({id:'projet_id', name:'projet-id'})))
     // Nom du projet
     form.append(Dom.createFormRow(null, Dom.createInputText({name:'projet-name', placeholder:'Titre/nom du projet'})))
     // Catégorie
@@ -106,6 +106,7 @@ const ProjetForm = {
 
     let divButtons = Dom.createDiv({class:'row buttons'})
     divButtons.append(Dom.createButton({text:'Annuler', class:'btn-cancel'}))
+    divButtons.append(Dom.createButton({text:'Détruire', class:'btn-destroy-projet'}))
     divButtons.append(Dom.createButton({text:'Enregistrer', class:'btn-save'}))
     form.append(divButtons)
 
@@ -116,8 +117,20 @@ const ProjetForm = {
 , observe(){
     this.form.querySelector('.btn-save').addEventListener('click', this.save.bind(this))
     this.form.querySelector('.btn-cancel').addEventListener('click', this.closeForm.bind(this))
+    this.form.querySelector('.btn-destroy-projet').addEventListener('click', this.destroyProjectRequired.bind(this))
     this.form.querySelector('#projet-folder').addEventListener('click', this.chooseMainFolder.bind(this))
     this.form.querySelector('#projet-file').addEventListener('click', this.chooseMainFile.bind(this))
+  }
+
+  // Pour détruire le projet (après une confirmation)
+, async destroyProjectRequired(){
+    if ( !this.projet ) {
+      alert("Vous ne pouvez détruire qu'un projet existant !")
+    } else {
+      if ( confirm(`Voulez-vous vraiment détruire définitivement le projet "${this.projet.name.toUpperCase()}" et toutes les tâches qui s'y rapportant ?`) ){
+        await this.projet.destroyAll()
+      }
+    }
   }
 
   // Pour choisir le dossier principal
@@ -144,6 +157,23 @@ Object.defineProperties(ProjetForm,{
       this._form = document.querySelector('#projet-form')
     }
     return this._form
+  }}
+
+  /**
+    Retourne l'instance du projet, si c'est une édition. Sinon, retourne
+    null (pas undefined)
+  **/
+, projet:{get(){
+    if ( undefined === this._projet ) {
+      var pid = document.querySelector('form#projet-form input#projet_id').value
+      console.log("pid = ", pid)
+      if ( pid == '' ) {
+        this._projet = null
+      } else {
+        this._projet = Projet.get(parseInt(pid,10))
+      }
+    }
+    return this._projet
   }}
 })
 

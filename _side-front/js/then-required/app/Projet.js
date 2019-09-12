@@ -83,9 +83,14 @@ class Projet {
     $(`#${this.domId}-working_time`).text(hduration)
   }
 
-  // Retourne true si le projet est dépassé
+  // Retourne true si le projet n'est pas achevé et est dépassé
   isOutOfDate(){
-    return this.expected_at && (new Date() > new Date(this.expected_at))
+    return !this.isComplete() && (this.expected_at && (new Date() > new Date(this.expected_at)))
+  }
+
+  // Retourne true si le projet est achevé
+  isComplete(){
+    return !!this.finished_at
   }
 
   // Pour placer le projet dans sa liste
@@ -94,11 +99,20 @@ class Projet {
     this.observe()
   }
 
-  // Destruction du projet
+  // Destruction du projet dans la liste
   remove(){
     this.domObj.remove()
     delete this._domobj
     this._domobj = undefined
+  }
+
+  // Méthode qui procède vraiment à la destruction complète du projet,
+  // dans la base de données comme dans l'affichage
+  async destroyAll(){
+    console.log("Je vais détruire le projet est les tâches.")
+    return
+    let request = `DELETE FROM projets WHERE id = ?`
+    await MySql2.execute(request, [this.id])
   }
 
   /**

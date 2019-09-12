@@ -49,3 +49,8 @@ form div.row.buttons button {
 form div.row.buttons button.btn-cancel {
   float: left;
 }
+form div.row.buttons button.btn-destroy-projet {
+  float: left;
+  background-color:red;
+  color: white;
+}
