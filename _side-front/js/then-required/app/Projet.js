@@ -109,10 +109,28 @@ class Projet {
   // Méthode qui procède vraiment à la destruction complète du projet,
   // dans la base de données comme dans l'affichage
   async destroyAll(){
-    console.log("Je vais détruire le projet est les tâches.")
-    return
-    let request = `DELETE FROM projets WHERE id = ?`
-    await MySql2.execute(request, [this.id])
+    var res
+    // Destruction des tâches (s'il y en a)
+    let requestTasks = 'DELETE FROM tasks WHERE projet_id = ?'
+    await MySql2.execute(requestTasks, [this.id])
+    res = await MySql2.count('tasks', `projet_id = ${this.id}`)
+    if ( res > 0 ) throw new Error("Pour une raison inconnue, les tâches du projet n'ont pas été détruite. Je ne détruis pas le projet.")
+    // Destruction du projet
+    let requestProjet = `DELETE FROM projets WHERE id = ?`
+    await MySql2.execute(requestProjet, [this.id])
+    // On doit avoir confirmation que ça a fonctionné
+    res = await MySql2.count('projets', `id = ${this.id}`)
+    if ( res != 0 ) throw new Error("Pour une raison inconnue, le projet n'a pas pu être détruit…")
+
+    // Destruction de son affichage
+    this.remove()
+
+    // Suppression de sa donnée dans Projet.items
+    delete Projet.items[this.id]
+    Projet.items[this.id] = undefined
+
+    // Confirmation
+    UI.message("Projet & tâches détruits avec succès.")
   }
 
   /**

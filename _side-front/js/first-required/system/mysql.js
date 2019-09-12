@@ -32,6 +32,12 @@ const MySql2 = {
     }
   }
 
+, async count(table_name, filtre) {
+    var request = `SELECT COUNT(*) FROM ${table_name}`
+    if ( filtre ) request += ` WHERE ${filtre}`
+    var res = await this.execute({sql:request, rowsAsArray:true})
+    return res[0][0]
+  }
 , async lastInsertId(){
     var res = await this.execute({sql:"SELECT LAST_INSERT_ID()", rowsAsArray:true})
     var lii = res[0][0]
