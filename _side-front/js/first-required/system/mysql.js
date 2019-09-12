@@ -1,10 +1,14 @@
 'use strict'
 
-// const MYSQL = require('mysql')
-// const MYSQL_DATA = require('../data/secret/mysql.js')
-
-// const MYSQL = require('mysql2/promise')
-// const bluebird = require('bluebird')
+/**
+  |
+  | mysql
+  | version 1.2.0
+  |
+  | Utilitaire pour les bases de données. Extension du module mysql2 pour
+  | faciliter les requêtes avec les bases de données.
+  |
+**/
 const MYSQL = require('mysql2')
 
 // Données secrètes pour la connexion à la base MySql
