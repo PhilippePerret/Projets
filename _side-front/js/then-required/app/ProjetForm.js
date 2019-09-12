@@ -4,30 +4,44 @@
   d'éditer un projet.
 **/
 
-const ProjetForm = {
-  toggleForm(){
-    if ( this._form ) {
-      this.closeForm()
+class ProjetForm {
+
+  // Le formulaire courante
+  static get current(){ return this._current }
+  static set current(v){this._current = v}
+
+  static toggleForm(){
+    if ( this.current ) {
+      this.closeCurrentForm()
     } else {
       this.openForm()
     }
   }
-, closeForm(){this.form.remove(); delete this._form}
-, openForm(projet){
-  this.form && this.closeForm()
-  this.build()
-  this.form || raise("Impossible de trouver le formulaire, bizarre…")
-  this.observe()
-  projet && this.setFormValues(projet.data)
-}
 
-, PROPERTIES: ['id', 'name', 'description', 'categorie', 'state','folder','open_in','file','started_at','expected_at','finished_at']
-, DATE_PROPERTIES: ['started_at','expected_at','finished_at']
-, INTEGER_PROPERTIES: ['id', 'categorie']
-, table_name: 'projets'
-, prefix: 'projet'
+  static closeCurrentForm(){
+    this.current.form.remove()
+    delete this._current
+    this._current = undefined
+  }
 
-, async save(){
+  static openForm(projet){
+    if ( this.current ) this.closeCurrentForm()
+    this.current = new ProjetForm()
+    this.current.build()
+    this.current.form || raise("Impossible de trouver le formulaire, bizarre…")
+    this.current.observe()
+    projet && this.current.setFormValues(projet.data)
+  }
+
+  /**
+    | ---------------------------------------------------------------------
+    |
+    | INSTANCE FORMULAIRE
+    |
+    |
+  **/
+
+  async save(){
     if ( !this.dataAreValid() ) return
     let projet_id = this.values.id
       , now = new Date()
@@ -56,7 +70,7 @@ const ProjetForm = {
     // console.log("request:", request)
     // console.log("values:", values)
     await MySql2.execute(request, values)
-    this.closeForm()
+    ProjetForm.closeCurrentForm()
     if ( isNew ) {
       projet_id = await MySql2.lastInsertId()
       projet = new Projet(projet_id)
@@ -69,7 +83,7 @@ const ProjetForm = {
   }
 
   // Return true si les données sont valides et les met dans `this.values`
-, dataAreValid(){
+  dataAreValid(){
     const vals = this.getFormValues()
     try {
       vals.name || raise("Il faut donner un nom au projet.")
@@ -81,7 +95,7 @@ const ProjetForm = {
     }
   }
 
-, build(){
+  build(){
     let form = Dom.create('FORM', {id:'projet-form'})
 
     // ID caché
@@ -114,16 +128,17 @@ const ProjetForm = {
 
     UI.rightColumn.append(form)
   }
-, observe(){
+
+  observe(){
     this.form.querySelector('.btn-save').addEventListener('click', this.save.bind(this))
-    this.form.querySelector('.btn-cancel').addEventListener('click', this.closeForm.bind(this))
+    this.form.querySelector('.btn-cancel').addEventListener('click', ProjetForm.closeCurrentForm.bind(ProjetForm))
     this.form.querySelector('.btn-destroy-projet').addEventListener('click', this.destroyProjectRequired.bind(this))
     this.form.querySelector('#projet-folder').addEventListener('click', this.chooseMainFolder.bind(this))
     this.form.querySelector('#projet-file').addEventListener('click', this.chooseMainFile.bind(this))
   }
 
   // Pour détruire le projet (après une confirmation)
-, async destroyProjectRequired(){
+  async destroyProjectRequired(){
     if ( !this.projet ) {
       alert("Vous ne pouvez détruire qu'un projet existant !")
     } else {
@@ -134,7 +149,7 @@ const ProjetForm = {
   }
 
   // Pour choisir le dossier principal
-, chooseMainFolder(){
+  chooseMainFolder(){
     var res = Dialog.showOpenDialogSync({title:"Dossier principal", properties:['openDirectory'], message:"Choisir le dossier principal du projet :"})
     if ( res ){
       res = res[0]
@@ -143,27 +158,26 @@ const ProjetForm = {
   }
 
   // Pour choisir le fichier principal
-, chooseMainFile(){
+  chooseMainFile(){
     var res = Dialog.showOpenDialogSync({title:"Fichier principal", properties:['openFile'], message:"Choisir le fichier principal (actuel) du projet :"})
     if ( res ){
       res = res[0]
       if ( res ){ this.form.querySelector('#projet-file').value = res }
     }
   }
-}
-Object.defineProperties(ProjetForm,{
-  form:{get(){
+
+  get form(){
     if ( ! this._form ) {
       this._form = document.querySelector('#projet-form')
     }
     return this._form
-  }}
+  }
 
   /**
-    Retourne l'instance du projet, si c'est une édition. Sinon, retourne
-    null (pas undefined)
+    Retourne l'instance {Projet} du projet édité, si c'est une édition, ou
+    null si c'est une création.
   **/
-, projet:{get(){
+  get projet(){
     if ( undefined === this._projet ) {
       var pid = document.querySelector('form#projet-form input#projet_id').value
       console.log("pid = ", pid)
@@ -174,7 +188,14 @@ Object.defineProperties(ProjetForm,{
       }
     }
     return this._projet
-  }}
-})
+  }
+}
 
-Object.assign(ProjetForm, FormModule)
+Object.assign(ProjetForm.prototype, FormModule)
+Object.assign(ProjetForm.prototype, {
+    PROPERTIES: ['id', 'name', 'description', 'categorie', 'state','folder','open_in','file','started_at','expected_at','finished_at']
+  , DATE_PROPERTIES: ['started_at','expected_at','finished_at']
+  , INTEGER_PROPERTIES: ['id', 'categorie']
+  , table_name: 'projets'
+  , prefix: 'projet'
+})

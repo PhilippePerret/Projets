@@ -1,5 +1,14 @@
 # Description des versions
 
+## 1.2.7
+
+* Formulaire transformé en classe, pour avoir une instance à chaque projet (résolution des conflits qui venait d'une édition/création multiple).
+
+## 1.2.6
+
+* Mise en place de la destruction du projet
+* Résolution du bug qui montrait le projet en dépassement alors qu'il était achevé.
+
 ## 1.2.5
 
 * Ajout de la catégorie des commentaires (genre Icare)
